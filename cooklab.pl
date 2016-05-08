@@ -1,9 +1,26 @@
 #!/usr/bin/env perl
 use Mojolicious::Lite;
 
-get '/' => sub {
+use lib 'lib';
+use Cooklab::Model::Users;
+
+# Helper to lazy initialize and store our model object
+helper users => sub { state $users = Cooklab::Model::Users->new };
+
+# /?user=sebastian&pass=secr3t
+any '/' => sub {
   my $c = shift;
-  $c->render(text => 'Hello World!');
+
+  # Query parameters
+  my $user = $c->param('user') || '';
+  my $pass = $c->param('pass') || '';
+
+  # Check password
+  return $c->render(text => "Welcome $user.")
+    if $c->users->check($user, $pass);
+
+  # Failed
+  $c->render(text => 'Wrong username or password.');
 };
 
 app->start;
