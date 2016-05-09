@@ -1,1 +1,1 @@
-web: morbo -l http://*:$PORT cooklab.pl
+web: morbo -l http://*:$PORT script/cooklab
